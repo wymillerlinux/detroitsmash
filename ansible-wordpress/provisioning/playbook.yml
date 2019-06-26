@@ -1,0 +1,62 @@
+# Wyatt's first ansible playbook
+# Written by Wyatt J. Miller, 2019
+#
+# Installing/setting up all the things for a Wordpress instance 
+
+- hosts: all
+  become: true
+  tasks:
+    - name: "Pinging all the things"
+      ping:
+    - name: "Update APT cache"
+      apt: update_cache=yes cache_valid_time=3600
+    
+    # Installing PHP via the PPA 
+    - name: "Installing PHP"
+      apt: 
+        name: ['php-fpm', 'php-mysql', 'php-xml'] 
+        state: present
+    
+    # We don't want apache
+    - name: "Removing apache"
+      apt: name=apache2 state=removed
+      
+    # Installing and configuring MySQL
+    - name: "Installing MySQL and a MySQL client library"
+      apt: name={{ item }} state=installed
+      with_items:
+        - mysql-server-5.6
+        - python-mysqldb
+    - name: "Generating mysql password"
+      command: openssl rad -hex 7 creates=/root/.my.cnf
+      register: mysql_new_root_pass
+    - name: "Remove needless users"
+      mysql_user: name="" state=absent
+      when: mysql_new_root_pass.changed
+    - name: "Remove test database"
+      mysql_db: name=test state=absent
+      when: mysql_new_root_pass.changed
+    - name: "Setting mysql root password"
+      mysql_user: name=root host={{ item }} pass={{ mysql_new_root_pass.stdout }}
+      with_items:
+        - "{{ ansible_hostname }}"
+        - localhost
+        - 127.0.0.1
+        - ::1
+      when: mysql_new_root_pass.changed
+    - name: "Output mysql password"
+      debug: msg="New mysql root password is {{ mysql_new_root_pass.stdout }}"
+    - name: "Create my.cnf"
+      template: src="templates/my.cnf" dest="/root/.my.cnf"
+      when: mysql_new_root_pass.changed
+
+    # Installing and configuring nginx
+    - name: "Installing nginx"
+      apt: name=nginx state=installed
+    - name: "Starting the nginx service"
+      service: name=nginx state=running
+    - name: "Create nginx config file"
+      template: src="templates/deafult" dest="/etc/nginx/sites-available/default"
+    - name: "Restart nginx"
+      service: name=nginx state=restarted
+
