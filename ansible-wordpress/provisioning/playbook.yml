@@ -8,13 +8,15 @@
   tasks:
     - name: "Pinging all the things"
       ping:
+    - name: "PPA time!"
+      apt_repository: repo=ppa:ondrej/php
     - name: "Update APT cache"
       apt: update_cache=yes cache_valid_time=3600
     
     # Installing PHP via the PPA 
     - name: "Installing PHP"
       apt: 
-        name: ['php-fpm', 'php-mysql', 'php-xml'] 
+        name: ['php', 'php-fpm', 'php-mysql', 'php-xml'] 
         state: present
     
     # We don't want apache
@@ -58,5 +60,6 @@
     - name: "Create nginx config file"
       template: src="templates/deafult" dest="/etc/nginx/sites-available/default"
     - name: "Restart nginx"
-      service: name=nginx state=restarted
-
+      service:
+        name: nginx
+        state=restarted
