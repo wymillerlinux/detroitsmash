@@ -1,7 +1,9 @@
 # Wyatt's first ansible playbook
 # Written by Wyatt J. Miller, 2019
 #
-# Installing/setting up all the things for a Wordpress instance 
+# Installing/setting up all the things for a Wordpress instance
+# note that the ppa doesn't work so the script is a bit broken \o/
+# Instead I just creating one web server
 
 - hosts: all
   become: true
@@ -16,7 +18,7 @@
     # Installing PHP via the PPA 
     - name: "Installing PHP"
       apt: 
-        name: ['php', 'php-fpm', 'php-mysql', 'php-xml'] 
+        name: ['php5', 'php5-fpm', 'php5-mysql'] 
         state: present
     
     # We don't want apache
@@ -39,12 +41,10 @@
       mysql_db: name=test state=absent
       when: mysql_new_root_pass.changed
     - name: "Setting mysql root password"
-      mysql_user: name=root host={{ item }} pass={{ mysql_new_root_pass.stdout }}
+      mysql_user: name=root login_host={{ item }} login_password={{ mysql_new_root_pass.stdout }}
       with_items:
-        - "{{ ansible_hostname }}"
         - localhost
         - 127.0.0.1
-        - ::1
       when: mysql_new_root_pass.changed
     - name: "Output mysql password"
       debug: msg="New mysql root password is {{ mysql_new_root_pass.stdout }}"
@@ -56,10 +56,15 @@
     - name: "Installing nginx"
       apt: name=nginx state=installed
     - name: "Starting the nginx service"
-      service: name=nginx state=running
+      service: name=nginx state=started
     - name: "Create nginx config file"
-      template: src="templates/deafult" dest="/etc/nginx/sites-available/default"
-    - name: "Restart nginx"
+      template: src="templates/default" dest="/etc/nginx/sites-available/default"
+  handlers:
+    - name: Restart nginx
       service:
         name: nginx
-        state=restarted
+        state: restarted
+    - name: Create nginx config file
+      template:
+        src: "templates/default"
+        dest: "/etc/nginx/sites-available/default"
