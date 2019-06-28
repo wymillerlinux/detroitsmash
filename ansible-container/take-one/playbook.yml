@@ -1,0 +1,18 @@
+- hosts: localhost
+
+  tasks:
+    - name: "Create a Docker data container"
+      docker_container:
+        name: data01
+        image: busybox
+        state: started
+    
+    - name: "Create a Docker NoSQL container"
+      docker_container:
+        name: mongo01
+        image: mongo
+        ports:
+          - "27017:27017"
+        state: started
+        volumes:
+          - /data
