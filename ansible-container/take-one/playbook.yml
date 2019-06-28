@@ -6,6 +6,8 @@
         name: data01
         image: busybox
         state: started
+        volumes:
+          - /data/busybox
     
     - name: "Create a Docker NoSQL container"
       docker_container:
@@ -15,4 +17,4 @@
           - "27017:27017"
         state: started
         volumes:
-          - /data
+          - /data/mongo
