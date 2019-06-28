@@ -1,3 +1,8 @@
+# Cron script in Ansible
+# Written by Wyatt J. Miller, 2019
+#
+# A cron script that'll create a cron job and delete the same cron job
+
 - hosts: localhost
 
   tasks:
