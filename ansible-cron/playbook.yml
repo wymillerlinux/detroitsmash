@@ -9,8 +9,8 @@
   - name: "Create a cron job"
     cron:
       name: "Backup my backups"
-      hour: 0
-      minute: 0
+      hour: "0"
+      minute: "0"
       job: "tar cvzf backup.tar.gz *.tar.gz > /dev/null"
 
   - name: "Delete previous cron job"
