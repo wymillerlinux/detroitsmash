@@ -1,3 +1,6 @@
+# Docker script written in Ansible
+# 
+
 - hosts: localhost
 
   tasks:
@@ -18,3 +21,19 @@
         state: started
         volumes:
           - /data/mongo
+
+    - name: "Create a Cassandra container"
+      docker_container:
+        name: cassandra01
+        image: cassandra
+        state: started
+        ports:
+          - "7199:7199"
+          - "7000:7000"
+          - "7001:7001"
+          - "9160:9160"
+          - "9042:9042"
+        networks:
+          - name: "bridge"
+        volumes:
+          - /data/cassandra
