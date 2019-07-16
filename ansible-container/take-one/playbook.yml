@@ -1,5 +1,7 @@
 # Docker script written in Ansible
-# 
+# Written by Wyatt J. Miller, 2019
+#
+# Spins up Docker containers with this one playbook
 
 - hosts: localhost
 
