@@ -10,7 +10,7 @@ Ansible is an automation and provisioing platform where you write "Ansible scrip
 (actually called Ansible roles and playbooks) as YAML files and run them against
 the Ansible program to have certain workstations and/or servers provisioned and
 to go. This link [here](https://www.ansible.com/overview/how-ansible-works) will
-give a better explaination of what Ansible is and how it works.
+give a better explanation of what Ansible is and how it works.
 
 ## Installation
 
