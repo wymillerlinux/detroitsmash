@@ -1,0 +1,42 @@
+---
+# tasks file for ansible-bootstrap-basic
+- name: Update system (Fedora)
+  dnf:
+    name: "*"
+    state: latest
+  when: ansible_distribution == 'Fedora'
+
+- name: Update system (Ubuntu)
+  apt:
+    name: "*"
+    state: latest
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install basic stuff (Fedora)
+  dnf:
+    name: 
+      - weechat
+      - tmux
+      - htop
+      - iftop
+      - netcat
+      - git
+      - fish
+    state: present
+  when: ansible_distribution == 'Fedora'
+
+- name: Install basic stuff (Ubuntu)
+  apt:
+    name: 
+      - weechat
+      - tmux
+      - htop
+      - iftop
+      - netcat
+      - git
+      - fish
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Change default shell to fish
+  command: chsh -s /usr/bin/fish
