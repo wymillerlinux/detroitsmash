@@ -1,0 +1,18 @@
+---
+# Setup for dev workstation
+- name: Get user home directory
+  shell: "echo $HOME"
+  register: user_home_dir
+
+- name: Get user
+  shell: whoami
+  register: current_user
+
+- name: Get primary group
+  shell: id -gn
+  register: current_group
+
+- name: Create a Source directory
+  file:
+    path: "{{user_home_dir}}/Source"
+    state: directory

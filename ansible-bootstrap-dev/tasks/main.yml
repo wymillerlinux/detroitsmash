@@ -1,2 +1,62 @@
 ---
 # tasks file for ansible-bootstrap-dev
+
+- include:
+    - setup.yml
+
+- name: Install the relevant programming languages (Java, Python, Ruby, C/C++ and Golang)
+  dnf:
+    name:
+      - "gcc"
+      - "autoconf"
+      - "binutils"
+      - "make"
+      - "cmake"
+      - "ruby"
+      - "python3"
+      - "golang"
+      - "java-11-openjdk"
+    state: present
+
+- name: "Install Rust"
+  shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+  changed_when: false
+
+- name: Install vim
+  dnf:
+    name:
+     - "vim"
+    state: present
+    
+- name: Grab my dotfiles
+  git:
+    repo: "https://github.com/wymillerlinux/dotfiles"
+    dest: "{{user_home_dir}}/Source/dotfiles"
+    clone: yes
+
+- name: Pull down Vundle
+  git:
+    repo: "https://github.com/VundleVim/Vundle.vim"
+    dest: "{{user_home_dir}}/.vim/bundle/Vundle.vim"
+    clone: yes
+
+- name: Copy vim config
+  copy:
+    src: "{{user_home_dir}}/Source/dotfiles/.vimrc"
+    dest: "{{user_home_dir}}/.vimrc"
+    owner: "{{current_user}}"
+    group: "{{current_group}}"
+
+- name: Copy tmux config
+  copy:
+    src: "{{user_home_dir}}/Source/dotfiles/.tmux.conf"
+    dest: "{{user_home_dir}}/.tmux.conf"
+    owner: "{{current_user}}"
+    group: "{{current_group}}"
+
+- name: Copy vim config
+  copy:
+    src: "{{user_home_dir}}/Source/dotfiles/config.fish"
+    dest: "{{user_home_dir}}/.config/fish/config.fish"
+    owner: "{{current_user}}"
+    group: "{{current_group}}"
